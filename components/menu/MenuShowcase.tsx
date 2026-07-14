@@ -83,7 +83,7 @@ const MenuShowcase = () => {
     isPending: deleteMenuPending,
     variables,
   } = useDeleteMenu();
-
+  // asdasdasdadas
   const { data, isLoading, isError, error } = useGetMenus();
   if (isLoading) {
     return <div>Loading...</div>;
