@@ -7,6 +7,7 @@ import Preloader from "@/components/utils/Preloader";
 import Header from "@/components/home/Header";
 import TransitionProvider from "@/components/utils/TransitionProvider";
 import { Providers } from "./Providers";
+import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -48,6 +49,7 @@ export default function RootLayout({
             <ClerkProvider>
               <Header />
               {children}
+              <Toaster richColors position="bottom-right" />
             </ClerkProvider>
           </TransitionProvider>
         </Providers>

@@ -17,7 +17,7 @@ const Header = () => {
               <Link href="/">Home</Link>
             </li>
             <li className="hover:text-primary transition-colors">
-              <Link href="/dashboard">Dashboard</Link>
+              <Link href="/menus">My Menus</Link>
             </li>
             <li className="hover:text-primary transition-colors">
               <Link href="/about">About</Link>
