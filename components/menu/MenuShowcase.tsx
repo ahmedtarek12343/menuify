@@ -86,7 +86,7 @@ const MenuShowcase = () => {
 
   const { data, isLoading, isError, error } = useGetMenus();
   if (isLoading) {
-    return <>Loading...</>;
+    return <div>Loading...</div>;
   }
   if (isError) {
     return <>Error : {error.message}</>;
