@@ -6,12 +6,13 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { useRef, useState } from "react";
 import SplitText from "gsap/src/SplitText";
-import { Edit, Loader2, Trash } from "lucide-react";
+import { Edit, Loader2, Plus, Trash } from "lucide-react";
 import { useDeleteMenu } from "@/hooks/useDeleteMenu";
 import AddMenu from "./AddMenu";
 import { useRouter } from "next/navigation";
 import EditMenu from "./EditMenu";
 import { editMenuProps } from "@/types";
+import { Link } from "next-view-transitions";
 
 gsap.registerPlugin(SplitText);
 
@@ -92,15 +93,13 @@ const MenuShowcase = () => {
     return <>Error : {error.message}</>;
   }
   return (
-    <div className="space-y-5 mt-4 p-6">
+    <div className="space-y-5 p-6">
       {data?.length === 0 ? (
         <p>No menus found</p>
       ) : (
         data?.map((menu) => (
-          <div
-            onClick={() => {
-              router.push(`/menus/${menu.id}`);
-            }}
+          <Link
+            href={`/menus/${menu.id}`}
             key={menu.id}
             className="p-3 border hover:border-primary hover:cursor-pointer transition rounded-md flex justify-between items-center"
           >
@@ -108,6 +107,7 @@ const MenuShowcase = () => {
             <div className="flex gap-2">
               <Button
                 onClick={(e) => {
+                  e.preventDefault();
                   e.stopPropagation();
                   setEditDialog({ oldName: menu.name, menuId: menu.id });
                 }}
@@ -116,6 +116,7 @@ const MenuShowcase = () => {
               </Button>
               <Button
                 onClick={(e) => {
+                  e.preventDefault();
                   e.stopPropagation();
                   deleteMenu(menu.id);
                 }}
@@ -128,15 +129,16 @@ const MenuShowcase = () => {
                 )}
               </Button>
             </div>
-          </div>
+          </Link>
         ))
       )}
       <Button
         onClick={() => {
           setMenuFormOpen((prev) => !prev);
         }}
+        className="w-full bg-transparent border border-dashed py-2 hover:bg-primary hover:text-primary-foreground hover:border-none transition duration-500 border-white/80"
       >
-        {menuFormOpen ? "Close Menu" : "Add Menu"}
+        <Plus />
       </Button>
 
       <div

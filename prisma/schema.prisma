@@ -43,6 +43,7 @@ model Menu{
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@unique([ownerId,id])
   @@map("menus")
 }
 

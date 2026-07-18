@@ -1,5 +1,6 @@
 "use client";
-
+import { AlertCircleIcon } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useUpdateMenu } from "@/hooks/useUpdateMenu";
 import {
   Dialog,
@@ -12,7 +13,6 @@ import { editMenuProps } from "@/types";
 import { Input } from "../ui/input";
 import { useState } from "react";
 import { Button } from "../ui/button";
-
 const EditMenu = ({
   open,
   setOpen,
@@ -22,6 +22,9 @@ const EditMenu = ({
 }) => {
   const [newName, setNewName] = useState(open?.oldName || "");
   const { mutate, isPending, isError, error } = useUpdateMenu();
+  if (!open) {
+    return null;
+  }
 
   return (
     <Dialog open={!!open} onOpenChange={(value) => !value && setOpen(null)}>
@@ -29,7 +32,7 @@ const EditMenu = ({
         <DialogHeader>
           <DialogTitle>Edit Menu</DialogTitle>
           <DialogDescription>
-            Make changes to your menu here. Click save when you're done.
+            Make changes to your menu here. Click save when you&apos;re done.
           </DialogDescription>
         </DialogHeader>
         <Input
@@ -41,7 +44,7 @@ const EditMenu = ({
         <Button
           onClick={() => {
             mutate(
-              { menuId: open?.menuId!, newName },
+              { menuId: open?.menuId, newName },
               {
                 onSuccess: () => {
                   setOpen(null);
@@ -54,10 +57,13 @@ const EditMenu = ({
         >
           {isPending ? "Saving..." : "Save"}
         </Button>
+
         {isError && (
-          <p className="mt-2 text-center text-xs text-red-500">
-            {error.message}
-          </p>
+          <Alert variant={"destructive"}>
+            <AlertCircleIcon className="h-4 w-4" />
+            <AlertTitle className="font-bold">Error</AlertTitle>
+            <AlertDescription>{error.message}</AlertDescription>
+          </Alert>
         )}
       </DialogContent>
     </Dialog>

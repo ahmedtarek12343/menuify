@@ -93,3 +93,37 @@
     @apply font-sans;
   }
 }
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+  animation: scale 1s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+}
+
+::view-transition-new(root) {
+  z-index: 2;
+  animation: center-clip-reveal 1.2s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+}
+
+@keyframes center-clip-reveal {
+  0% {
+    transform: scale(1.2) translateY(100%);
+  }
+  100% {
+    transform: scale(1) translateY(0%);
+  }
+}
+
+@keyframes scale {
+  0% {
+    transform: scale(1) translateY(0);
+  }
+  100% {
+    transform: scale(0.8) translateY(-300);
+  }
+}

@@ -3,9 +3,8 @@ import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { ClerkProvider } from "@clerk/nextjs";
-import Preloader from "@/components/utils/Preloader";
+import { ViewTransitions } from "next-view-transitions";
 import Header from "@/components/home/Header";
-import TransitionProvider from "@/components/utils/TransitionProvider";
 import { Providers } from "./Providers";
 import { Toaster } from "@/components/ui/sonner";
 
@@ -32,28 +31,28 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={cn(
-        "h-full",
-        "antialiased",
-        geistSans.variable,
-        geistMono.variable,
-        "font-sans",
-        inter.variable,
-      )}
-    >
-      <body className="min-h-full flex flex-col">
-        <Providers>
-          <TransitionProvider>
+    <ViewTransitions>
+      <html
+        lang="en"
+        className={cn(
+          "h-full bg-primary",
+          "antialiased",
+          geistSans.variable,
+          geistMono.variable,
+          "font-sans",
+          inter.variable,
+        )}
+      >
+        <body className="min-h-full flex flex-col bg-black">
+          <Providers>
             <ClerkProvider>
               <Header />
               {children}
               <Toaster richColors position="bottom-right" />
             </ClerkProvider>
-          </TransitionProvider>
-        </Providers>
-      </body>
-    </html>
+          </Providers>
+        </body>
+      </html>
+    </ViewTransitions>
   );
 }

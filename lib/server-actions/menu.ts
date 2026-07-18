@@ -102,3 +102,50 @@ export const editMenu = async (menuId: string, newName: string) => {
     throw err;
   }
 };
+
+export const getLatestMenus = async () => {
+  try {
+    const user = await getUser();
+    if (!user) throw new Error("user not found");
+    const menus = await prisma.menu.findMany({
+      where: {
+        ownerId: user.id,
+      },
+      take: 4,
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+    if (!menus) {
+      return [];
+    }
+    return menus;
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
+};
+
+export const getMenuByID = async (menuId: string) => {
+  try {
+    const user = await getUser();
+    if (!user) {
+      throw new Error("user not found");
+    }
+    const menu = await prisma.menu.findUnique({
+      where: {
+        ownerId_id: {
+          id: menuId,
+          ownerId: user.id,
+        },
+      },
+    });
+    if (!menu) {
+      throw new Error("Menu not found");
+    }
+    return menu;
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
+};

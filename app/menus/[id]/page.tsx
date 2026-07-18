@@ -1,8 +1,12 @@
-import React from "react";
+import MenuDetails from "@/components/menu/MenuDetails";
 
 const page = async ({ params }: { params: { id: string } }) => {
   const { id } = await params;
-  return <div>page {id}</div>;
+  return (
+    <div className="p-6">
+      <MenuDetails id={id} />
+    </div>
+  );
 };
 
 export default page;
