@@ -13,10 +13,12 @@ import MultiSelectBox from "../comp-229";
 import Image from "next/image";
 import { generateReactHelpers } from "@uploadthing/react";
 import type { OurFileRouter } from "@/app/api/uploadthing/core";
+import AddCategory from "./AddCategory";
 
 const MenuDetails = ({ id }: { id: string }) => {
   const { data, isLoading, isError, error } = useGetMenuByID(id);
   const [addItem, setAddItem] = useState(false);
+  const [addCategory, setAddCategory] = useState(false);
   const { uploadFiles } = generateReactHelpers<OurFileRouter>();
   useGSAP(() => {
     if (addItem) {
@@ -34,7 +36,17 @@ const MenuDetails = ({ id }: { id: string }) => {
             duration: 1,
             ease: "power2.out",
           },
-          "<0.2",
+          "<0.15",
+        )
+        .from(
+          ".add-item-img",
+          {
+            x: (idx) => {
+              return idx === 0 ? -400 : 400;
+            },
+            stagger: 0.1,
+          },
+          "<0.3",
         );
     } else {
       gsap.timeline().to(".item-form", {
@@ -54,12 +66,11 @@ const MenuDetails = ({ id }: { id: string }) => {
     },
     onSubmit: async ({ value }) => {
       const file = value.imageUrl as unknown as File;
-      console.log(file);
       let uploadedUrl = "";
 
       if (file) {
         const res = await uploadFiles("imageUploader", { files: [file] });
-        uploadedUrl = res[0].url;
+        uploadedUrl = res[0].ufsUrl;
       }
 
       console.log({
@@ -97,8 +108,15 @@ const MenuDetails = ({ id }: { id: string }) => {
       >
         Add Item
       </Button>
-      <div className="item-form fixed p-6 flex justify-center items-center bg-primary top-0 right-full h-screen w-full z-51">
-        <div className="absolute top-5 right-5">
+      <Button
+        onClick={() => {
+          setAddCategory(true);
+        }}
+      >
+        Add Category
+      </Button>
+      <div className="item-form overflow-hidden fixed p-6 flex justify-center items-center bg-primary top-0 right-full h-screen w-full z-51">
+        <div className="absolute top-5 right-5 hover:text-red-500 hover:scale-120 hover:rotate-90 transition-all duration-300 cursor-pointer">
           <X
             className="size-6"
             onClick={() => {
@@ -112,6 +130,7 @@ const MenuDetails = ({ id }: { id: string }) => {
             src={"/apple-juice.gif"}
             width={100}
             height={100}
+            className="add-item-img"
           />
         </div>
         <div className="absolute bottom-12 right-15">
@@ -120,6 +139,7 @@ const MenuDetails = ({ id }: { id: string }) => {
             src={"/icegif-1074.gif"}
             width={100}
             height={100}
+            className="add-item-img"
           />
         </div>
         <form
@@ -181,6 +201,7 @@ const MenuDetails = ({ id }: { id: string }) => {
           </Field>
           <Button type="submit">Submit</Button>
         </form>
+        <AddCategory open={addCategory} setOpen={setAddCategory} />
       </div>
     </div>
   );
