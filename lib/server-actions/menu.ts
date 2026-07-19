@@ -39,8 +39,22 @@ export const getMenus = async () => {
       throw new Error("Unauthorized");
     }
     const menus = await prisma.menu.findMany({
-      where: {
-        ownerId: user.id,
+      orderBy: {
+        createdAt: "asc",
+      },
+      include: {
+        owner: {
+          select: {
+            firstName: true,
+            lastName: true,
+            imageUrl: true,
+          },
+        },
+        _count: {
+          select: {
+            items: true,
+          },
+        },
       },
     });
     if (!menus) {
@@ -59,6 +73,12 @@ export const deleteMenu = async (menuId: string) => {
     if (!user) {
       throw new Error("user not found");
     }
+
+    const currentMenu = await getMenuByID(menuId);
+    if (currentMenu.ownerId !== user.id) {
+      throw new Error("you are not authorized to delete this menu");
+    }
+
     const menu = await prisma.menu.delete({
       where: {
         id: menuId,
@@ -83,6 +103,10 @@ export const editMenu = async (menuId: string, newName: string) => {
         name: newName,
       },
     });
+    const currentMenu = await getMenuByID(menuId);
+    if (currentMenu.ownerId !== user.id) {
+      throw new Error("you are not authorized to edit this menu");
+    }
     if (existingMenu && existingMenu.id !== menuId) {
       throw new Error(
         "Menu with the same name exists. Please choose a different name",
@@ -96,6 +120,47 @@ export const editMenu = async (menuId: string, newName: string) => {
         name: newName,
       },
     });
+    return menu;
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
+};
+
+export const getLatestMenus = async () => {
+  try {
+    const user = await getUser();
+    if (!user) throw new Error("user not found");
+    const menus = await prisma.menu.findMany({
+      take: 4,
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+    if (!menus) {
+      return [];
+    }
+    return menus;
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
+};
+
+export const getMenuByID = async (menuId: string) => {
+  try {
+    const user = await getUser();
+    if (!user) {
+      throw new Error("user not found");
+    }
+    const menu = await prisma.menu.findUnique({
+      where: {
+        id: menuId,
+      },
+    });
+    if (!menu) {
+      throw new Error("Menu not found");
+    }
     return menu;
   } catch (err) {
     console.error(err);
