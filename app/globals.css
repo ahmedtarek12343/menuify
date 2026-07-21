@@ -102,12 +102,12 @@
 
 ::view-transition-old(root) {
   z-index: 1;
-  animation: scale 1s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+  animation: scale 0.5s ease-in forwards;
 }
 
 ::view-transition-new(root) {
   z-index: 2;
-  animation: center-clip-reveal 1.2s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+  animation: center-clip-reveal 0.5s ease-out forwards;
 }
 
 @keyframes center-clip-reveal {

@@ -13,6 +13,15 @@ export const getUser = async () => {
       where: {
         clerkId: userId,
       },
+      include: {
+        _count: {
+          select: {
+            menus: true,
+            items: true,
+            categories: true,
+          },
+        },
+      },
     });
     return user;
   } catch (err) {

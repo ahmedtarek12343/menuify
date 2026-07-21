@@ -2,7 +2,7 @@
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Dispatch, SetStateAction, useState } from "react";
-import { useAddMenu } from "@/hooks/useAddMenu";
+import { useAddMenu } from "@/hooks/menu/useAddMenu";
 
 interface AddMenuProps {
   setMenuFormOpen: Dispatch<SetStateAction<boolean>>;

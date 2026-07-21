@@ -53,6 +53,7 @@ export const getMenus = async () => {
         _count: {
           select: {
             items: true,
+            categories: true,
           },
         },
       },
@@ -161,7 +162,7 @@ export const getMenuByID = async (menuId: string) => {
     if (!menu) {
       throw new Error("Menu not found");
     }
-    return menu;
+    return { ...menu, isCurrentUser: user.id === menu.ownerId };
   } catch (err) {
     console.error(err);
     throw err;
