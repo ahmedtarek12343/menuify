@@ -61,6 +61,8 @@ model Category{
   menuId String
   items Item[]
 
+
+  @@unique([ownerId,menuId,name])
   @@map("categories")
 }
 

@@ -3,6 +3,7 @@
 import { Link } from "next-view-transitions";
 import { Show, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 import { Button } from "../ui/button";
+import { User2 } from "lucide-react";
 
 const Header = () => {
   return (
@@ -25,7 +26,15 @@ const Header = () => {
           </ul>
           <div className="flex items-center gap-2">
             <Show when={"signed-in"}>
-              <UserButton />
+              <UserButton>
+                <UserButton.MenuItems>
+                  <UserButton.Link
+                    href="/profile"
+                    label="Profile"
+                    labelIcon={<User2 className="size-4" />}
+                  ></UserButton.Link>
+                </UserButton.MenuItems>
+              </UserButton>
             </Show>
             <Show when={"signed-out"}>
               <Button asChild variant="secondary">

@@ -77,7 +77,7 @@ export default function ImageUpload({
                 <ImageUpIcon className="size-4 opacity-60" />
               </div>
               <p className="mb-1.5 font-medium text-sm">
-                Drop your image here or click to browse
+                Drop your image here or click to browse *
               </p>
               <p className="text-muted-foreground text-xs">
                 Max size: {maxSizeMB}MB

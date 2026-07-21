@@ -2,18 +2,19 @@
 
 import { ArrowLeft, X } from "lucide-react";
 import { Button } from "../ui/button";
-import { useGetMenuByID } from "@/hooks/useGetMenuByID";
+import { useGetMenuByID } from "@/hooks/menu/useGetMenuByID";
 import { useForm } from "@tanstack/react-form";
 import { Input } from "../ui/input";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { useState } from "react";
-import ImageUpload from "../comp-544";
-import MultiSelectBox from "../comp-229";
+import ImageUpload from "../utils/comp-544";
+import MultiSelectBox from "../utils/comp-229";
 import Image from "next/image";
 import { generateReactHelpers } from "@uploadthing/react";
 import type { OurFileRouter } from "@/app/api/uploadthing/core";
-import AddCategory from "./AddCategory";
+import AddCategory from "../category/AddCategory";
+import { Textarea } from "../ui/textarea";
 
 const MenuDetails = ({ id }: { id: string }) => {
   const { data, isLoading, isError, error } = useGetMenuByID(id);
@@ -25,18 +26,18 @@ const MenuDetails = ({ id }: { id: string }) => {
       gsap
         .timeline()
         .to(".item-form", {
-          right: 0,
-          duration: 1,
-          ease: "power2.out",
+          yPercent: -100,
+          duration: 0.75,
+          ease: "power1.inOut",
         })
         .from(
           "form",
           {
-            clipPath: "inset(0 100% 0 0)",
-            duration: 1,
-            ease: "power2.out",
+            clipPath: "inset(100% 0 0 0)",
+            duration: 0.75,
+            ease: "power1.inOut",
           },
-          "<0.15",
+          "<0.2",
         )
         .from(
           ".add-item-img",
@@ -49,14 +50,13 @@ const MenuDetails = ({ id }: { id: string }) => {
           "<0.3",
         );
     } else {
-      gsap.timeline().to(".item-form", {
-        right: "100%",
-        duration: 0.5,
-        ease: "power2.in",
+      gsap.to(".item-form", {
+        yPercent: 0,
+        ease: "power1.inOut",
       });
     }
   }, [addItem]);
-  const { Field, handleSubmit } = useForm({
+  const { Field, handleSubmit, reset } = useForm({
     defaultValues: {
       name: "",
       description: "",
@@ -67,6 +67,7 @@ const MenuDetails = ({ id }: { id: string }) => {
     onSubmit: async ({ value }) => {
       const file = value.imageUrl as unknown as File;
       let uploadedUrl = "";
+      reset();
 
       if (file) {
         const res = await uploadFiles("imageUploader", { files: [file] });
@@ -101,21 +102,25 @@ const MenuDetails = ({ id }: { id: string }) => {
         <ArrowLeft /> Go Back
       </Button>
       <h1 className="text-2xl font-semibold py-10">{data.name}</h1>
-      <Button
-        onClick={() => {
-          setAddItem(true);
-        }}
-      >
-        Add Item
-      </Button>
-      <Button
-        onClick={() => {
-          setAddCategory(true);
-        }}
-      >
-        Add Category
-      </Button>
-      <div className="item-form overflow-hidden fixed p-6 flex justify-center items-center bg-primary top-0 right-full h-screen w-full z-51">
+      {data.isCurrentUser && (
+        <>
+          <Button
+            onClick={() => {
+              setAddItem(true);
+            }}
+          >
+            Add Item
+          </Button>
+          <Button
+            onClick={() => {
+              setAddCategory(true);
+            }}
+          >
+            Add Category
+          </Button>
+        </>
+      )}
+      <div className="item-form overflow-hidden fixed p-6 flex justify-center items-center bg-primary top-0 left-0 translate-y-full h-screen w-full z-51">
         <div className="absolute top-5 right-5 hover:text-red-500 hover:scale-120 hover:rotate-90 transition-all duration-300 cursor-pointer">
           <X
             className="size-6"
@@ -147,36 +152,114 @@ const MenuDetails = ({ id }: { id: string }) => {
             e.preventDefault();
             handleSubmit();
           }}
-          className="flex flex-col gap-2 p-6 bg-black w-[max(35%,500px)] mx-auto"
+          className="flex relative flex-col gap-2 p-6 bg-black w-[max(35%,500px)] mx-auto"
         >
-          <Field name="name">
+          <Field
+            name="name"
+            validators={{
+              onChange: ({ value }) => {
+                if (!value) {
+                  return {
+                    type: "required",
+                    message: "Name is required",
+                  };
+                } else if (value.length < 3) {
+                  return {
+                    type: "required",
+                    message: "Name must be at least 3 characters long",
+                  };
+                }
+                return;
+              },
+            }}
+          >
             {(field) => (
-              <Input
-                type="text"
-                value={field.state.value}
-                onChange={(e) => field.handleChange(e.target.value)}
-                placeholder="Name"
-              />
+              <>
+                <Input
+                  type="text"
+                  aria-describedby="name-error"
+                  aria-invalid={!field.state.meta.isValid}
+                  value={field.state.value}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  placeholder="Name"
+                />
+                {!field.state.meta.isValid && (
+                  <p className="text-red-500 text-sm">
+                    {field.state.meta.errors
+                      .map((err) => err?.message)
+                      .join(", ")}
+                  </p>
+                )}
+              </>
             )}
           </Field>{" "}
-          <Field name="price">
+          <Field
+            name="price"
+            validators={{
+              onChange: ({ value }) => {
+                if (!value) {
+                  return {
+                    type: "required",
+                    message: "Price is required",
+                  };
+                }
+                return;
+              },
+            }}
+          >
             {(field) => (
-              <Input
-                type="number"
-                step="0.01"
-                value={field.state.value}
-                onChange={(e) => {
-                  if (+e.target.value < 0) return;
-                  field.handleChange(e.target.value);
-                }}
-                placeholder="Price"
-              />
+              <>
+                <Input
+                  type="number"
+                  step="0.01"
+                  aria-invalid={!field.state.meta.isValid}
+                  aria-describedby="price-error"
+                  value={field.state.value}
+                  onChange={(e) => {
+                    if (+e.target.value < 0) return;
+                    field.handleChange(e.target.value);
+                  }}
+                  placeholder="Price"
+                />
+                {!field.state.meta.isValid && (
+                  <p className="text-red-500 text-sm">
+                    {field.state.meta.errors
+                      .map((err) => err?.message)
+                      .join(", ")}
+                  </p>
+                )}
+              </>
             )}
           </Field>{" "}
+          <Field
+            name="category"
+            validators={{
+              onSubmit: ({ value }) => {
+                if (!value || value.trim() === "") {
+                  return "Category is required";
+                }
+                return;
+              },
+            }}
+          >
+            {(field) => (
+              <>
+                <MultiSelectBox
+                  menuId={data.id}
+                  isFormValid={field.state.meta.isValid}
+                  onCategoryChange={(category) => field.handleChange(category)}
+                />
+                {!field.state.meta.isValid && (
+                  <p className="text-red-500 text-sm">
+                    {field.state.meta.errors.at(0)}
+                  </p>
+                )}
+              </>
+            )}
+          </Field>
           <Field name="description">
             {(field) => (
-              <Input
-                type="text"
+              <Textarea
                 value={field.state.value}
                 onChange={(e) => {
                   field.handleChange(e.target.value);
@@ -185,13 +268,6 @@ const MenuDetails = ({ id }: { id: string }) => {
               />
             )}
           </Field>{" "}
-          <Field name="category">
-            {(field) => (
-              <MultiSelectBox
-                onCategoryChange={(category) => field.handleChange(category)}
-              />
-            )}
-          </Field>
           <Field name="imageUrl">
             {(field) => (
               <ImageUpload
@@ -201,8 +277,12 @@ const MenuDetails = ({ id }: { id: string }) => {
           </Field>
           <Button type="submit">Submit</Button>
         </form>
-        <AddCategory open={addCategory} setOpen={setAddCategory} />
-      </div>
+      </div>{" "}
+      <AddCategory
+        menuId={data.id}
+        open={addCategory}
+        setOpen={setAddCategory}
+      />
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import { useGetLatestMenus } from "@/hooks/useGetLatestMenus";
+import { useGetLatestMenus } from "@/hooks/menu/useGetLatestMenus";
 import React from "react";
 
 const LatestMenus = () => {
