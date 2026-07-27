@@ -137,6 +137,21 @@ export const getLatestMenus = async () => {
       orderBy: {
         createdAt: "desc",
       },
+      include: {
+        owner: {
+          select: {
+            firstName: true,
+            lastName: true,
+            imageUrl: true,
+          },
+        },
+        _count: {
+          select: {
+            items: true,
+            categories: true,
+          },
+        },
+      },
     });
     if (!menus) {
       return [];
@@ -163,6 +178,37 @@ export const getMenuByID = async (menuId: string) => {
       throw new Error("Menu not found");
     }
     return { ...menu, isCurrentUser: user.id === menu.ownerId };
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
+};
+
+export const getMenusbyUserId = async function () {
+  try {
+    const user = await getUser();
+    if (!user) {
+      throw new Error("user not found");
+    }
+    const menus = await prisma.menu.findMany({
+      where: {
+        ownerId: user.id,
+      },
+      include: {
+        items: true,
+        categories: true,
+        _count: {
+          select: {
+            categories: true,
+            items: true,
+          },
+        },
+      },
+    });
+    if (!menus) {
+      return [];
+    }
+    return menus;
   } catch (err) {
     console.error(err);
     throw err;

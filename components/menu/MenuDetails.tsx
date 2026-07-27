@@ -15,9 +15,13 @@ import { generateReactHelpers } from "@uploadthing/react";
 import type { OurFileRouter } from "@/app/api/uploadthing/core";
 import AddCategory from "../category/AddCategory";
 import { Textarea } from "../ui/textarea";
+import { useAddItem } from "@/hooks/item/useAddItem";
+import ItemsShowcase from "../item/ItemsShowcase";
+import { Link } from "next-view-transitions";
 
 const MenuDetails = ({ id }: { id: string }) => {
   const { data, isLoading, isError, error } = useGetMenuByID(id);
+  const { mutate: addItemMutation, isPending: addItemPending } = useAddItem();
   const [addItem, setAddItem] = useState(false);
   const [addCategory, setAddCategory] = useState(false);
   const { uploadFiles } = generateReactHelpers<OurFileRouter>();
@@ -37,7 +41,7 @@ const MenuDetails = ({ id }: { id: string }) => {
             duration: 0.75,
             ease: "power1.inOut",
           },
-          "<0.2",
+          "<",
         )
         .from(
           ".add-item-img",
@@ -47,7 +51,7 @@ const MenuDetails = ({ id }: { id: string }) => {
             },
             stagger: 0.1,
           },
-          "<0.3",
+          "<0.15",
         );
     } else {
       gsap.to(".item-form", {
@@ -73,10 +77,13 @@ const MenuDetails = ({ id }: { id: string }) => {
         const res = await uploadFiles("imageUploader", { files: [file] });
         uploadedUrl = res[0].ufsUrl;
       }
-
-      console.log({
-        ...value,
-        imageUrl: uploadedUrl,
+      addItemMutation({
+        itemName: value.name,
+        price: Number(value.price),
+        categoryId: value.category,
+        menuId: id,
+        description: value.description,
+        imageUrl: uploadedUrl || undefined,
       });
     },
   });
@@ -98,29 +105,34 @@ const MenuDetails = ({ id }: { id: string }) => {
         onClick={() => {
           history.back();
         }}
+        variant={"outline"}
       >
-        <ArrowLeft /> Go Back
+        <ArrowLeft className="mr-2 h-4 w-4" />
+        Back to profile
       </Button>
-      <h1 className="text-2xl font-semibold py-10">{data.name}</h1>
-      {data.isCurrentUser && (
-        <>
-          <Button
-            onClick={() => {
-              setAddItem(true);
-            }}
-          >
-            Add Item
-          </Button>
-          <Button
-            onClick={() => {
-              setAddCategory(true);
-            }}
-          >
-            Add Category
-          </Button>
-        </>
-      )}
-      <div className="item-form overflow-hidden fixed p-6 flex justify-center items-center bg-primary top-0 left-0 translate-y-full h-screen w-full z-51">
+      <h1 className="text-2xl font-semibold py-10">
+        {data.name}{" "}
+        {data.isCurrentUser && (
+          <div className="inline-block ml-5 space-x-2">
+            <Button
+              onClick={() => {
+                setAddItem(true);
+              }}
+            >
+              Add Item
+            </Button>
+            <Button
+              onClick={() => {
+                setAddCategory(true);
+              }}
+            >
+              Add Category
+            </Button>
+          </div>
+        )}
+      </h1>
+      <ItemsShowcase menuId={id} />
+      <div className="item-form overflow-hidden fixed p-6 flex justify-center items-center bg-primary top-0 left-0 translate-y-full h-screen w-full z-61">
         <div className="absolute top-5 right-5 hover:text-red-500 hover:scale-120 hover:rotate-90 transition-all duration-300 cursor-pointer">
           <X
             className="size-6"
@@ -275,7 +287,9 @@ const MenuDetails = ({ id }: { id: string }) => {
               />
             )}
           </Field>
-          <Button type="submit">Submit</Button>
+          <Button type="submit" disabled={addItemPending}>
+            {addItemPending ? "Adding..." : "Add Item"}
+          </Button>
         </form>
       </div>{" "}
       <AddCategory

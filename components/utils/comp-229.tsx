@@ -75,7 +75,7 @@ export default function MultiSelectBox({
         </PopoverTrigger>
         <PopoverContent
           align="start"
-          className="w-full min-w-[var(--radix-popper-anchor-width)] border-input p-0 z-[60]"
+          className="w-full min-w-[var(--radix-popper-anchor-width)] border-input p-0 z-[65]"
         >
           <Command>
             <CommandInput

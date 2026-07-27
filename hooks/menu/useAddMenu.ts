@@ -11,6 +11,7 @@ export const useAddMenu = () => {
     mutationFn: (name: string) => addMenu(name),
     onSuccess: ({ name }) => {
       queryClient.invalidateQueries({ queryKey: ["menus"] });
+      queryClient.invalidateQueries({ queryKey: ["menusbyuserId"] });
       toast.success(`${name} added successfully`);
     },
     onError: (err: Error) => {

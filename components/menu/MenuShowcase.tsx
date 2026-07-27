@@ -140,7 +140,7 @@ const MenuShowcase = () => {
           menuFormOpen
             ? "pointer-events-auto opacity-100"
             : "pointer-events-none opacity-0"
-        } fixed inset-0 z-50 bg-black/50 backdrop-blur-lg transition-opacity duration-300`}
+        } fixed inset-0 z-61 bg-black/50 backdrop-blur-lg transition-opacity duration-300`}
       ></div>
 
       <AddMenu inputRef={inputRef} setMenuFormOpen={setMenuFormOpen} />

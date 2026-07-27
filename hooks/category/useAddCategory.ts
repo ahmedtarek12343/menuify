@@ -19,6 +19,7 @@ export const useAddCategory = () => {
     }) => addCategory(name, menuId, imageUrl),
     onSuccess: ({ name, menuId }) => {
       queryClient.invalidateQueries({ queryKey: ["categories", menuId] });
+      queryClient.invalidateQueries({ queryKey: ["categoryByUserId"] });
       toast.success(`${name} added successfully`);
     },
     onError: (error) => {

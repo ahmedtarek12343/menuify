@@ -44,13 +44,13 @@ export default function RootLayout({
         )}
       >
         <body className="min-h-full flex flex-col bg-black">
-          <Providers>
-            <ClerkProvider>
+          <ClerkProvider>
+            <Providers>
               <Header />
               {children}
               <Toaster richColors position="bottom-right" />
-            </ClerkProvider>
-          </Providers>
+            </Providers>{" "}
+          </ClerkProvider>
         </body>
       </html>
     </ViewTransitions>

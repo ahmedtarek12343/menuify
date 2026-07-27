@@ -21,8 +21,24 @@ const MenuCard = ({ menu }: MenuCardProps) => {
     isPending: deleteMenuPending,
     variables: deletingMenuId,
   } = useDeleteMenu();
-  const user = useUserQuery();
+  const { data: user, isLoading, error, isError } = useUserQuery();
   const [editDialog, setEditDialog] = useState<editMenuProps | null>(null);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-[300px]">
+        <div className="w-5 h-5 border-2 border-white rounded-full border-t-transparent animate-spin"></div>
+      </div>
+    );
+  }
+
+  if (isError || !user) {
+    return (
+      <div className="flex items-center justify-center">
+        <div className="text-red-500">Something went wrong</div>
+      </div>
+    );
+  }
   return (
     <>
       <Link
@@ -38,7 +54,7 @@ const MenuCard = ({ menu }: MenuCardProps) => {
             {menu.name}
           </p>
 
-          {menu.ownerId === user.data?.id && (
+          {menu.ownerId === user?.id && (
             <div className="flex shrink-0 gap-1 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
               <Button
                 size="icon"
@@ -84,10 +100,13 @@ const MenuCard = ({ menu }: MenuCardProps) => {
 
         <div className="relative mt-5 flex items-center gap-2 border-t border-white/10 pt-4">
           <Avatar className="h-7 w-7 ring-2 ring-white/10">
-            <AvatarImage src={menu.owner.imageUrl} alt={menu.owner.firstName} />
+            <AvatarImage
+              src={menu.owner?.imageUrl ?? "/download.png"}
+              alt={menu.owner?.firstName ?? ""}
+            />
             <AvatarFallback className="text-xs">
-              {menu.owner.firstName.slice(0, 1) +
-                menu.owner.lastName.slice(0, 1)}
+              {menu.owner?.firstName.slice(0, 1) +
+                menu.owner?.lastName.slice(0, 1)}
             </AvatarFallback>
           </Avatar>
           <p className="text-sm text-muted-foreground">
