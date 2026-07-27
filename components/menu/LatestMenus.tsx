@@ -1,5 +1,5 @@
 import { useGetLatestMenus } from "@/hooks/menu/useGetLatestMenus";
-import React from "react";
+import MenuCard from "./MenuCard";
 
 const LatestMenus = () => {
   const { data, isLoading, isError, error } = useGetLatestMenus();
@@ -18,7 +18,7 @@ const LatestMenus = () => {
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
       {data?.map((menu) => (
-        <div key={menu.id}>{menu.name}</div>
+        <MenuCard key={menu.id} menu={menu} />
       ))}
     </div>
   );

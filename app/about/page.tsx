@@ -1,5 +1,9 @@
 const AboutPage = () => {
-  return <div>about</div>;
+  return (
+    <div>
+      <h1>ahmed tarek</h1>
+    </div>
+  );
 };
 
 export default AboutPage;

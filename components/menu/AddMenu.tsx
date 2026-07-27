@@ -1,8 +1,9 @@
 "use client";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useAddMenu } from "@/hooks/menu/useAddMenu";
+import { createPortal } from "react-dom";
 
 interface AddMenuProps {
   setMenuFormOpen: Dispatch<SetStateAction<boolean>>;
@@ -11,14 +12,16 @@ interface AddMenuProps {
 
 const AddMenu = ({ setMenuFormOpen, inputRef }: AddMenuProps) => {
   const [menuName, setMenuName] = useState("");
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
   const handleMenuSumbit = () => {
     mutate(menuName);
     setMenuFormOpen(false);
     setMenuName("");
   };
   const { mutate, isPending } = useAddMenu();
-  return (
-    <div className="fixed menu-form bottom-0 translate-y-full left-1/2 -translate-x-1/2 bg-primary p-8 min-w-3xl z-52">
+  const content = (
+    <div className="fixed menu-form bottom-0 translate-y-full left-1/2 -translate-x-1/2 bg-primary p-8 min-w-3xl z-61">
       <p className="form-text text-xl font-semibold mb-5">
         Enter the Name for your Menu:
       </p>
@@ -46,6 +49,7 @@ const AddMenu = ({ setMenuFormOpen, inputRef }: AddMenuProps) => {
       </Button>
     </div>
   );
+  return mounted && createPortal(content, document.body, "add-menu-portal");
 };
 
 export default AddMenu;

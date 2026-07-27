@@ -102,3 +102,32 @@ export const deleteCategory = async (categoryId: string) => {
   }
 };
 
+export const getCategoryByUserId = async () => {
+  try {
+    const user = await getUser();
+    if (!user) {
+      throw new Error("Unauthorized");
+    }
+    const category = await prisma.category.findMany({
+      where: {
+        ownerId: user.id,
+      },
+      include: {
+        menu: {
+          select: {
+            name: true,
+          },
+        },
+        _count: {
+          select: {
+            items: true,
+          },
+        },
+      },
+    });
+    return category;
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
+};

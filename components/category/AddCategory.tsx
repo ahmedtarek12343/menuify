@@ -62,7 +62,7 @@ const AddCategory = ({ open, setOpen, menuId }: AddCategoryProps) => {
   return (
     <>
       <div
-        className="fixed top-0 left-0 w-screen h-screen z-51 opacity-0 overlay duration-300 transition-all backdrop-blur-2xl"
+        className="fixed top-0 left-0 w-screen h-screen z-61 opacity-0 overlay duration-300 transition-all backdrop-blur-2xl"
         style={{
           opacity: open ? 1 : 0,
           pointerEvents: open ? "auto" : "none",
@@ -72,7 +72,7 @@ const AddCategory = ({ open, setOpen, menuId }: AddCategoryProps) => {
           setOpen(false);
         }}
       ></div>
-      <div className="add-category fixed translate-y-full bottom-0 left-1/2 -translate-x-1/2 p-6 w-[max(35%,500px)] z-52 bg-primary">
+      <div className="add-category fixed translate-y-full bottom-0 left-1/2 -translate-x-1/2 p-6 w-[max(35%,500px)] z-62 bg-primary">
         <div className="absolute top-5 right-5 hover:text-red-500 hover:scale-120 hover:rotate-90 transition-all duration-300 cursor-pointer">
           <X
             className="size-6"
